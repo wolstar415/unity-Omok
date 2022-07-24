@@ -13,27 +13,16 @@ public class RoomInfo
 
 public class LobyManager : MonoBehaviour
 {
-    public TextMeshProUGUI nickname;
-    public TMP_InputField logiInputField;
+
     public TMP_InputField createInputField;
     public RoomInfo[] roomsInfo;
     public Transform roomParent;
     public GameObject roomPrefab;
     public List<GameObject> roomobs;
 
-    public void LoginBtn()
-    //접속 버튼 누르면 실행
-    {
-        if (logiInputField.text == "")
-        {
-            return;
-        }
+    public TextMeshProUGUI recordText;
 
-
-        GameManager.inst.loadingOb.SetActive(true);
-
-        SocketManager.inst.socket.Emit("LoginCheck", logiInputField.text);
-    }
+    
 
     public void CreateBtn()
     //방생성 버튼시 실행하는 함수
@@ -45,38 +34,24 @@ public class LobyManager : MonoBehaviour
 
         GameManager.inst.loadingOb.SetActive(true);
 
-        SocketManager.inst.socket.Emit("CreateCheck", createInputField.text, GameManager.inst.maxRoom);
+        SocketManager.inst.socket.Emit("CreateRoomCheck", createInputField.text, GameManager.inst.maxRoom);
     }
 
+    
     public void OnEndEditEventMethod()
     {
+
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            LoginBtn();
+            CreateBtn();
         }
-    }
 
+    }
     private void Start()
     {
-        logiInputField.Select();
+        
 
-
-        SocketManager.inst.socket.OnUnityThread("Login", data =>
-        {
-            GameManager.inst.nickName = logiInputField.text;
-            GameManager.inst.loadingOb.SetActive(false);
-            GameManager.inst.lobyOb.SetActive(false);
-            GameManager.inst.joinOb.SetActive(true);
-            nickname.text = logiInputField.text;
-            SocketManager.inst.socket.Emit("RoomListCheck", null);
-        });
-        SocketManager.inst.socket.OnUnityThread("LoginFailed", data =>
-        {
-            GameManager.inst.loadingOb.SetActive(false);
-            GameManager.inst.loginWarningOb.SetActive(true);
-        });
-
-        SocketManager.inst.socket.OnUnityThread("Create", data =>
+        SocketManager.inst.socket.OnUnityThread("CreateRoom", data =>
         {
             GameManager.inst.room = createInputField.text;
             GameManager.inst.loadingOb.SetActive(false);
@@ -84,10 +59,10 @@ public class LobyManager : MonoBehaviour
             GameManager.inst.chatOb.SetActive(true);
             GameManager.inst.chatManager.ChatStart();
         });
-        SocketManager.inst.socket.OnUnityThread("CreateFailed", data =>
+        SocketManager.inst.socket.OnUnityThread("CreateRoomFailed", data =>
         {
             GameManager.inst.loadingOb.SetActive(false);
-            GameManager.inst.roomWarningOb.SetActive(true);
+            GameManager.inst.Warning("똑같은 이름의 방이 존재합니다.");
         });
         SocketManager.inst.socket.OnUnityThread("RoomReset", data =>
         {
@@ -112,6 +87,7 @@ public class LobyManager : MonoBehaviour
             GameManager.inst.chatOb.SetActive(true);
             GameManager.inst.chatManager.ChatStart();
         });
+       
         SocketManager.inst.socket.OnUnityThread("JoinFailed", data =>
         {
             GameManager.inst.loadingOb.SetActive(false);
@@ -155,4 +131,6 @@ public class LobyManager : MonoBehaviour
             }
         }
     }
+
+
 }

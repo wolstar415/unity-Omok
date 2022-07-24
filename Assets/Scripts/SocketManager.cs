@@ -46,10 +46,15 @@ public class SocketManager : MonoBehaviour
             UnityMainThreadDispatcher.Instance().Enqueue(() => { SceneManager.LoadScene("Loby"); });
         };
         socket.OnDisconnected += (sender, e) => { Debug.Log("disconnect: " + e); };
-        
+        socket.Disconnect();
         
     }
-    
+
+    [ContextMenu ("강제로끊기")]
+    public void dis()
+    {
+        socket.Disconnect();
+    }
     
     private void OnDestroy()
     {
