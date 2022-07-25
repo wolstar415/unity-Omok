@@ -41,43 +41,31 @@ public class ChatManager : MonoBehaviour
         //플레이어 목록을 갱신합니다. 나가거나 들어올 때 방안에있는 사람들이 받는 이벤트입니다.
         {
             players = JsonConvert.DeserializeObject<String[]>(data.GetValue(0).ToString());
+
+            GameManager.inst.Player1 = data.GetValue(1).GetString();
+            GameManager.inst.Player2 = data.GetValue(2).GetString();
+            player1.text = GameManager.inst.Player1;
+            player2.text = GameManager.inst.Player2;
+            player1_record.text = data.GetValue(3).GetString();
+            player2_record.text = data.GetValue(4).GetString();
+            
+            
             PlayerReSet();
 
-            if (GameManager.inst.Player1==data.GetValue(1).ToString())
+            if (omokManager.inst.IsPlay)
             {
-                if (omokManager.inst.IsPlay)
+                if (GameManager.inst.Player1 == "" || GameManager.inst.Player2 == "")
                 {
-                    if (GameManager.inst.Player2==GameManager.inst.nickName)
+                    gameInfo.text = "게임시작 전";
+                    if (GameManager.inst.Player1 == GameManager.inst.nickName)
                     {
-                        
-                        
                         Victory();
-                        
                     }
-                }
-                gameInfo.text = "게임시작 전";
-
-                
-
-                //GameManager.inst.Player1 = "";
-                //player1.text = "";
-                //player1_record.text = "";
-            }
-            else if (GameManager.inst.Player2==data.GetValue(1).ToString())
-            {
-                if (omokManager.inst.IsPlay)
-                {
-                    if (GameManager.inst.Player1==GameManager.inst.nickName)
+                    else if (GameManager.inst.Player2 == GameManager.inst.nickName)
                     {
-                        
                         Victory();
                     }
                 }
-
-                gameInfo.text = "게임시작 전";
-                //GameManager.inst.Player2 = "";
-                //player2.text = "";
-                //player2_record.text = "";
             }
         });
         SocketManager.inst.socket.OnUnityThread("LeaveRoom", data =>
@@ -145,48 +133,34 @@ public class ChatManager : MonoBehaviour
                 player2_record.text = $"{victory}승 {defeat}패";
             }
         });
-        
-        SocketManager.inst.socket.OnUnityThread("LeavePlayer", data =>
-        {
-            if (GameManager.inst.Player1==data.GetValue(0).GetString())
-            {
-                if (GameManager.inst.Player2==GameManager.inst.nickName&&omokManager.inst.IsPlay)
-                {
-                    Victory();
-                }
-                gameInfo.text = "게임시작 전";
-            }
-            else if (GameManager.inst.Player2==data.GetValue(0).GetString())
-            {
-                if (GameManager.inst.Player1==GameManager.inst.nickName&&omokManager.inst.IsPlay)
-                {
-                    Victory();
-                }
-                gameInfo.text = "게임시작 전";
-            }
-        });
+
         
         
-        SocketManager.inst.socket.OnUnityThread("PlayerEnter", data =>
-            //플레이어 목록을 갱신합니다. 나가거나 들어올 때 방안에있는 사람들이 받는 이벤트입니다.
+        SocketManager.inst.socket.OnUnityThread("PlayerEnter", data => 
+            //중간에 들어오면 들어온사람에게 정보를 보내줍니다. 
         {
             players = JsonConvert.DeserializeObject<String[]>(data.GetValue(0).ToString());
+            //기존 플레이어목록을 보내줍니다.
             PlayerReSet();
             
             if (GameManager.inst.Player1==GameManager.inst.nickName)
+                //1번 플레이어라면 보냄
             {
                 string s = JsonConvert.SerializeObject(omokManager.inst.ball);
-                SocketManager.inst.socket.Emit("EnterFunc",s,player1.text,player2.text,player1_record.text,player2_record.text,data.GetValue(1).ToString(),omokManager.inst.IsPlay,omokManager.inst.IsBlackTurn);
+                //2차원배열을 문자열로 변환
+                SocketManager.inst.socket.Emit("EnterFunc",s,player1.text,player2.text,player1_record.text,player2_record.text,data.GetValue(1).ToString(),omokManager.inst.IsPlay,omokManager.inst.IsBlackTurn,gameInfo.text);
             }
             else if (GameManager.inst.Player1 == "" && GameManager.inst.Player2 == GameManager.inst.nickName)
+                //1번에는 아무도없고 2번플레이어가 있다면 보냄
             {
                 string s = JsonConvert.SerializeObject(omokManager.inst.ball);
-                SocketManager.inst.socket.Emit("EnterFunc",s,player1.text,player2.text,player1_record.text,player2_record.text,data.GetValue(1).ToString(),omokManager.inst.IsPlay,omokManager.inst.IsBlackTurn);
+                //2차원 배열을 문자열로 변환
+                SocketManager.inst.socket.Emit("EnterFunc",s,player1.text,player2.text,player1_record.text,player2_record.text,data.GetValue(1).ToString(),omokManager.inst.IsPlay,omokManager.inst.IsBlackTurn,gameInfo.text);
             }
         });
         
         SocketManager.inst.socket.OnUnityThread("EnterFunc", data =>
-            //플레이어 목록을 갱신합니다. 나가거나 들어올 때 방안에있는 사람들이 받는 이벤트입니다.
+            //정보 보내준거 받음
         {
                 GameManager.inst.Player1 = data.GetValue(1).GetString();
                 GameManager.inst.Player2 = data.GetValue(2).GetString();
@@ -198,20 +172,9 @@ public class ChatManager : MonoBehaviour
                 omokManager.inst.StoneSetting();
                 omokManager.inst.IsPlay = data.GetValue(6).GetBoolean();
                 omokManager.inst.IsBlackTurn = data.GetValue(7).GetBoolean();
+                gameInfo.text = data.GetValue(8).GetString();
 
-                if (omokManager.inst.IsPlay)
-                {
-                    if (omokManager.inst.IsBlackTurn)
-                    {
-                        gameInfo.text = "흑 차례입니다";
-                    }
-                    else
-                    {
-                        gameInfo.text = "백 차례입니다";
-                    }
-                }
-                
-                
+
 
         });
     }
@@ -288,6 +251,7 @@ public class ChatManager : MonoBehaviour
         {
             playerparent.GetChild(i).GetComponent<TextMeshProUGUI>().text = players[i];
         }
+        
     }
 
     public void OnEndEditEventMethod()
