@@ -13,7 +13,6 @@ public class RoomInfo
 
 public class LobyManager : MonoBehaviour
 {
-
     public TMP_InputField createInputField;
     public RoomInfo[] roomsInfo;
     public Transform roomParent;
@@ -22,10 +21,9 @@ public class LobyManager : MonoBehaviour
 
     public TextMeshProUGUI recordText;
 
-    
 
     public void CreateBtn()
-    //방생성 버튼시 실행하는 함수
+        //방생성 버튼시 실행하는 함수
     {
         if (createInputField.text == "")
         {
@@ -37,20 +35,17 @@ public class LobyManager : MonoBehaviour
         SocketManager.inst.socket.Emit("CreateRoomCheck", createInputField.text, GameManager.inst.maxRoom);
     }
 
-    
+
     public void OnEndEditEventMethod()
     {
-
         if (Input.GetKeyDown(KeyCode.Return))
         {
             CreateBtn();
         }
-
     }
+
     private void Start()
     {
-        
-
         SocketManager.inst.socket.OnUnityThread("CreateRoom", data =>
         {
             GameManager.inst.room = createInputField.text;
@@ -87,7 +82,7 @@ public class LobyManager : MonoBehaviour
             GameManager.inst.chatOb.SetActive(true);
             GameManager.inst.chatManager.ChatStart();
         });
-       
+
         SocketManager.inst.socket.OnUnityThread("JoinFailed", data =>
         {
             GameManager.inst.loadingOb.SetActive(false);
@@ -131,6 +126,4 @@ public class LobyManager : MonoBehaviour
             }
         }
     }
-
-
 }

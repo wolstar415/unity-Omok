@@ -8,12 +8,13 @@ public class LoginManager : MonoBehaviour
     public TextMeshProUGUI nickname;
     public TMP_InputField loginInputField; //아이디 필드
     public TMP_InputField passWordInputField; //비밀번호 필드
-    
+
     public TMP_InputField loginCheckInputField; //회원가입 아이디 필드
     public TMP_InputField passWordCheck1InputField; //회원가입 비밀번호 필드
     public TMP_InputField passWordCheck2InputField; //회원가입 비밀번호 필드
-    
+
     public TMP_InputField nickNameInputField; //닉네임 필드
+
     public void LoginBtn()
         //접속 버튼 누르면 실행
     {
@@ -25,12 +26,14 @@ public class LoginManager : MonoBehaviour
 
         GameManager.inst.loadingOb.SetActive(true);
 
-        SocketManager.inst.socket.Emit("LoginCheck", loginInputField.text,passWordInputField.text);
+        SocketManager.inst.socket.Emit("LoginCheck", loginInputField.text, passWordInputField.text);
     }
+
     public void CreateBtn()
         //접속 버튼 누르면 실행
     {
-        if (loginCheckInputField.text == "" || passWordCheck1InputField.text == ""|| passWordCheck2InputField.text == "")
+        if (loginCheckInputField.text == "" || passWordCheck1InputField.text == "" ||
+            passWordCheck2InputField.text == "")
         {
             return;
         }
@@ -44,8 +47,9 @@ public class LoginManager : MonoBehaviour
 
         GameManager.inst.loadingOb.SetActive(true);
 
-        SocketManager.inst.socket.Emit("CreateCheck", loginCheckInputField.text,passWordCheck1InputField.text);
+        SocketManager.inst.socket.Emit("CreateCheck", loginCheckInputField.text, passWordCheck1InputField.text);
     }
+
     public void NickNameBtn()
         //접속 버튼 누르면 실행
     {
@@ -57,8 +61,9 @@ public class LoginManager : MonoBehaviour
 
         GameManager.inst.loadingOb.SetActive(true);
 
-        SocketManager.inst.socket.Emit("NickNameCheck", nickNameInputField.text,GameManager.inst.ID);
+        SocketManager.inst.socket.Emit("NickNameCheck", nickNameInputField.text, GameManager.inst.ID);
     }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -75,11 +80,11 @@ public class LoginManager : MonoBehaviour
             GameManager.inst.defeat = data.GetValue(2).GetInt32();
 
             GameManager.inst.lobyManager.recordText.text = $"{GameManager.inst.victory}승 {GameManager.inst.defeat}패";
-            
+
             GameManager.inst.ID = loginInputField.text;
             GameManager.inst.nickName = data.GetValue(0).GetString();
 
-            if (GameManager.inst.nickName=="")
+            if (GameManager.inst.nickName == "")
             {
                 nickNameInputField.Select();
                 GameManager.inst.nickNameSetob.SetActive(true);
@@ -90,7 +95,6 @@ public class LoginManager : MonoBehaviour
                 SocketManager.inst.socket.Emit("RoomListCheck", null);
                 nickname.text = GameManager.inst.nickName;
             }
-            
         });
         SocketManager.inst.socket.OnUnityThread("LoginFailed", data =>
         {
@@ -134,9 +138,8 @@ public class LoginManager : MonoBehaviour
             GameManager.inst.Warning("해당 닉네임이 존재합니다.");
         });
     }
-    
-    
-    
+
+
     public void OnEndEditEventMethod(int i)
     {
         switch (i)
@@ -146,12 +149,14 @@ public class LoginManager : MonoBehaviour
                 {
                     LoginBtn();
                 }
+
                 break;
             case 2:
                 if (Input.GetKeyDown(KeyCode.Return))
                 {
                     CreateBtn();
                 }
+
                 break;
             default:
                 break;
@@ -161,12 +166,11 @@ public class LoginManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.inst.IdCreateOb.activeSelf||GameManager.inst.loginOb.activeSelf)
+        if (GameManager.inst.IdCreateOb.activeSelf || GameManager.inst.loginOb.activeSelf)
         {
-            
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                if (GameManager.inst.IdCreateOb.activeSelf==false)
+                if (GameManager.inst.IdCreateOb.activeSelf == false)
                 {
                     if (loginInputField.isFocused)
                     {
@@ -191,14 +195,8 @@ public class LoginManager : MonoBehaviour
                     {
                         loginCheckInputField.Select();
                     }
-                    
-                    
                 }
-            
             }
-     
         }
-        
-        
     }
 }

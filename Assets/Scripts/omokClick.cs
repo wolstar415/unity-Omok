@@ -13,7 +13,7 @@ public class omokClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     [SerializeField] private GameObject noOb; // x 표시
 
     public bool Check()
-    //선택을 할 수 있는지 확인하는 스크립트
+        //선택을 할 수 있는지 확인하는 스크립트
     {
         if (omokManager.inst.IsPlay == false)
             //플레이중이 아님
@@ -49,7 +49,7 @@ public class omokClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
     public void OnPointerEnter(PointerEventData eventData)
-    //마우스가 들어오면
+        //마우스가 들어오면
     {
         if (Check() == false)
         {
@@ -61,7 +61,7 @@ public class omokClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
     public void OnPointerExit(PointerEventData eventData)
-    //마우스가 나가면
+        //마우스가 나가면
     {
         if (Check() == false)
         {
@@ -73,7 +73,7 @@ public class omokClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
     public void OnPointerClick(PointerEventData eventData)
-    //클릭시
+        //클릭시
     {
         if (Check() == false)
         {
@@ -83,7 +83,7 @@ public class omokClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
         stoneHelopOb.gameObject.SetActive(false);
         //네모흰색 비활성화
-        
+
         var color = transform.GetComponent<Image>().color;
         color.a = 1f;
         GetComponent<Image>().color = color;
@@ -105,7 +105,7 @@ public class omokClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
     public void ballClick(int num)
-    //num이 1이라면 흑돌이 채워지고 2면 백돌이 3이라면 X표시가 표시됩니다.
+        //num이 1이라면 흑돌이 채워지고 2면 백돌이 3이라면 X표시가 표시됩니다.
     {
         if (num == 1)
         {
@@ -136,7 +136,7 @@ public class omokClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
     public void Clear()
-    //초기화 시킵니다.
+        //초기화 시킵니다.
     {
         var color = transform.GetComponent<Image>().color;
         color.a = 0f;
@@ -148,7 +148,7 @@ public class omokClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     [ContextMenu("Do Something")]
     void DoSomething()
-    //디버그용
+        //디버그용
     {
         Transform a = GameObject.Find("Grid").transform;
         for (int i = 0; i <= 14; i++)
@@ -163,7 +163,7 @@ public class omokClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     [ContextMenu("name")]
     void nameset()
-    //디버그용
+        //디버그용
     {
         string[] s = gameObject.name.Split(',');
         row = int.Parse(s[1]);

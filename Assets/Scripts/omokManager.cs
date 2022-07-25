@@ -217,15 +217,12 @@ public class omokManager : MonoBehaviour
             if (GameManager.inst.Player1 == GameManager.inst.nickName)
             {
                 SocketManager.inst.socket.Emit("GameEnd", GameManager.inst.Player1, GameManager.inst.Player2);
-                
             }
             else if (GameManager.inst.Player2 == GameManager.inst.nickName)
             {
                 SocketManager.inst.socket.Emit("GameEnd", GameManager.inst.Player2, GameManager.inst.Player1);
             }
             //첫번째 인자는 승자 두번째는 패자
-            
-            
         }
         else
         {
@@ -233,7 +230,7 @@ public class omokManager : MonoBehaviour
             string enemyName = GameManager.inst.Player1 == GameManager.inst.nickName
                 ? GameManager.inst.Player2
                 : GameManager.inst.Player1;
-            
+
             if (IsBlackTurn)
             {
                 SocketManager.inst.socket.Emit("Turn", "Black", row, column, enemyName);
@@ -257,18 +254,18 @@ public class omokManager : MonoBehaviour
             ballNum = 2;
             //흰돌은 2번
         }
-        
+
         if (FiveCheck(ballNum))
             //5개가 있는지 파악합니다.
         {
             return true;
         }
-        
+
         return false;
     }
 
     bool InRange(params int[] v)
-    //범위가 벗어나면 오류가 뜨기때문에 검사합니다.
+        //범위가 벗어나면 오류가 뜨기때문에 검사합니다.
     {
         for (int i = 0; i < v.Length; i++)
             if (!(v[i] >= 0 && v[i] < SIZE))
@@ -323,6 +320,7 @@ public class omokManager : MonoBehaviour
 
         return false;
     }
+
     public void omokCheck()
     {
         //렌주룰 이기때문에
@@ -356,7 +354,7 @@ public class omokManager : MonoBehaviour
     }
 
     void SixCheck(int column, int row)
-    //해당 좌표가 6목이라면 X표시를 합니다.
+        //해당 좌표가 6목이라면 X표시를 합니다.
     {
         if (ball[column, row] != 0)
         {
@@ -366,7 +364,7 @@ public class omokManager : MonoBehaviour
 
         ball[column, row] = 1;
         //미리 흑돌을 깔고 6목인지 확인합니다.
-        
+
         //완전탐색을 합니다.
         int ballNum = 1;
         for (int i = 0; i < SIZE; i++)
@@ -425,7 +423,7 @@ public class omokManager : MonoBehaviour
 
 
     public void NoClear()
-    //X표시를 전부 지웁니다.
+        //X표시를 전부 지웁니다.
     {
         if (myPlayType != ePlayType.BLACK)
         {
@@ -460,9 +458,6 @@ public class omokManager : MonoBehaviour
         }
     }
 
-    
-    
-
 
     void ThreeThreeCheck(int i, int j)
     {
@@ -482,7 +477,6 @@ public class omokManager : MonoBehaviour
             return;
         }
 
-        
 
         //→
         if (ThreeCheck(i, j - 4, i, j - 3, i, j - 2, i, j - 1, i, j + 1, i, j + 2, i, j + 3, i, j + 4)) ++ThreeValue;
